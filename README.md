@@ -1,61 +1,17 @@
 Mersenne Twister - Pseudo Random Number Generator in NASM
 
-This is my implementation of the Mersenne Twister algorythm in NASM. It is
-based on the psuedo-code below, taken from Wikipedia:
+This is my implementation of the Mersenne Twister algorythm in NASM.
+It is based on the psuedo-code taken from Wikipedia:
 http://en.wikipedia.org/wiki/Mersenne_Twister
 
+
 makefile     - Builds the test program
+
 mtwister.asm - This is the Mersenne Twister code
+
+psuedocode   - Psuedo code taken from Wikipedia
+
 README.md    - This file
+
 testmt.asm   - This is a quick test program for the above, running on Linux
 
-chris.goldsmith@yandex.com
-
----------------------------------------------------------
-
-Pseudocode:
- 
-The following piece of pseudocode generates uniformly distributed 32-bit
-integers in the range [0, 2^32 - 1] with the MT19937 algorithm:
-
-  // Create a length 624 array to store the state of the generator
- int[0..623] MT
- int index = 0
- 
- // Initialize the generator from a seed
- function initialize_generator(int seed) {
-     index := 0
-     MT[0] := seed
-     for i from 1 to 623 { // loop over each element
-         MT[i] := lowest 32 bits of(1812433253 * (MT[i-1] xor (right shift by 30 bits(MT[i-1]))) + i) // 0x6c078965
-     }
- }
- 
- // Extract a tempered pseudorandom number based on the index-th value,
- // calling generate_numbers() every 624 numbers
- function extract_number() {
-     if index == 0 {
-         generate_numbers()
-     }
- 
-     int y := MT[index]
-     y := y xor (right shift by 11 bits(y))
-     y := y xor (left shift by 7 bits(y) and (2636928640)) // 0x9d2c5680
-     y := y xor (left shift by 15 bits(y) and (4022730752)) // 0xefc60000
-     y := y xor (right shift by 18 bits(y))
-
-     index := (index + 1) mod 624
-     return y
- }
- 
- // Generate an array of 624 untempered numbers
- function generate_numbers() {
-     for i from 0 to 623 {
-         int y := (MT[i] and 0x80000000)                       // bit 31 (32nd bit) of MT[i]
-                        + (MT[(i+1) mod 624] and 0x7fffffff)   // bits 0-30 (first 31 bits) of MT[...]
-         MT[i] := MT[(i + 397) mod 624] xor (right shift by 1 bit(y))
-         if (y mod 2) != 0 { // y is odd
-             MT[i] := MT[i] xor (2567483615) // 0x9908b0df
-         }
-     }
- }
