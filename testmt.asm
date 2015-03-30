@@ -16,45 +16,45 @@ STDOUT equ 1
 section .text
 global _start
 _start:
-	call		_init_generator		; seed the PRNG
+	call        _init_generator     ; seed the PRNG
 
-	mov			ecx, 6				; get 6 test numbers
+	mov         ecx, 6              ; get 6 test numbers
 .prngloop:
-	call		_extract_number		; get random 32 bit int in eax
-	call		_printintdec		; print integer in eax
-	loop		.prngloop
+	call        _extract_number     ; get random 32 bit int in eax
+	call        _printintdec        ; print integer in eax
+	loop        .prngloop
 
 .exit:
-	mov			ebx, 0
-	mov			eax, SYS_EXIT
-	int			0x80
+	mov         ebx, 0
+	mov         eax, SYS_EXIT
+	int         0x80
 
 ; print a 32 bit integer, as a decimal
 ; the integerer is passed in eax
 ; (the ascii decimal equivalent is written to 'decnum')
 _printintdec:
-	push		ecx
-	mov			ecx, 10			; 10 decimal digits
-	mov			ebx, decnum + 9 ; store ascii equivalent here
+	push        ecx
+	mov         ecx, 10         ; 10 decimal digits
+	mov         ebx, decnum + 9 ; store ascii equivalent here
 .loop:
-	push		ecx				; save loop counter
-	mov			edx, 0
-	mov			ecx, 10			; divide eax by 10
-	div			ecx				; ...remainder is in edx
-	add			dl, '0'			; convert remainder to ascii
-	mov byte	[ebx], dl		; store ascii digit
-	dec			ebx
-	pop			ecx				; restore loop counter
-	loop		.loop
+	push        ecx             ; save loop counter
+	mov         edx, 0
+	mov         ecx, 10         ; divide eax by 10
+	div         ecx             ; ...remainder is in edx
+	add         dl, '0'         ; convert remainder to ascii
+	mov byte    [ebx], dl       ; store ascii digit
+	dec         ebx
+	pop         ecx             ; restore loop counter
+	loop        .loop
 
 ; print the decimal number in 'decnum'
-	mov		edx, 11
-	mov		ecx, decnum
-	mov		ebx, STDOUT
-	mov		eax, SYS_WRITE
-	int		0x80
-	pop		ecx
+	mov     edx, 11
+	mov     ecx, decnum
+	mov     ebx, STDOUT
+	mov     eax, SYS_WRITE
+	int     0x80
+	pop     ecx
 	ret
 
 section .data
-decnum db '0000000000', 10		; 32 bit integer, as ascii
+decnum db '0000000000', 10	  ; 32 bit integer, as ascii
